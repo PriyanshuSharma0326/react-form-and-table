@@ -2,9 +2,14 @@ import React, { useContext, useState } from 'react';
 import './form.styles.scss';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
-import { CountryContext } from '../context/CountryContext';
+import { CountryContext } from '../../context/CountryContext';
+import { UsersContext } from '../../context/UsersContext';
+import { useNavigate } from 'react-router-dom';
+import { validateEmail, validatePhoneNumber } from '../../utils/validation.util';
 
 function Form() {
+    const { users, setUsers } = useContext(UsersContext);
+
     const defaultFormFields = {
         name: '',
         email: '',
@@ -16,25 +21,82 @@ function Form() {
         nation: {},
     };
 
+    const defaultFormErrors = {
+        nameError: '',
+        emailError: '',
+        phoneError: '',
+        serviceRatingError: '',
+        beverageRatingError: '',
+        cleanlinessRatingError: '',
+        overallRatingError: '',
+    };
+
     const { countryDetails } = useContext(CountryContext);
 
     const [formInputs, setFormInputs] = useState(defaultFormFields);
+
+    const [formErrors, setFormErrors] = useState(defaultFormErrors);
 
     const changeHandler = (e) => {
         const { name, value } = e.target;
         setFormInputs({...formInputs, [name]: value});
     }
 
+    const navigate = useNavigate();
+
     const submitHandler = (e) => {
         e.preventDefault();
-        console.log({...formInputs, nation: countryDetails});
+
+        const newFormErrors = {};
+
+        if (formInputs.name.trim() === '') {
+            newFormErrors.nameError = 'Name is required';
+        }
+
+        if (formInputs.email.trim() === '') {
+            newFormErrors.emailError = 'Email is required';
+        } else {
+            if (!validateEmail(formInputs.email)) {
+                newFormErrors.emailError = 'Invalid email address';
+            }
+        }
+
+        if (formInputs.phone.trim() === '') {
+            newFormErrors.phoneError = 'Phone is required';
+        } else {
+            if (!validatePhoneNumber(formInputs.phone)) {
+                newFormErrors.phoneError = 'Invalid phone number';
+            }
+        }
+
+        if (formInputs.serviceRating.trim() === '') {
+            newFormErrors.serviceRatingError = 'This input is required';
+        }
+        if (formInputs.beverageRating.trim() === '') {
+            newFormErrors.beverageRatingError = 'This input is required';
+        }
+        if (formInputs.cleanlinessRating.trim() === '') {
+            newFormErrors.cleanlinessRatingError = 'This input is required';
+        }
+        if (formInputs.overallRating.trim() === '') {
+            newFormErrors.overallRatingError = 'This input is required';
+        }
+
+        if (Object.keys(newFormErrors).length === 0) {
+            setUsers([...users, {...formInputs, nation: countryDetails}]);
+            setFormInputs(defaultFormFields);
+            navigate('/success');
+        } else {
+            setFormErrors(newFormErrors);
+        }
     }
 
     return (
         <form action="" className='form-container'>
             <FormInput 
                 labelText='Customer Name' 
-                inputType='text'
+                inputType='text' 
+                errorText={formErrors.nameError} 
                 inputOptions={{
                     placeholder: 'Your name',
                     type: 'text',
@@ -42,13 +104,14 @@ function Form() {
                     id: 'name',
                     name: 'name',
                     onChange: changeHandler,
-                    value: formInputs.name
+                    value: formInputs.name,
                 }}
             />
 
             <FormInput 
                 labelText='Email' 
-                inputType='text'
+                inputType='text' 
+                errorText={formErrors.emailError} 
                 inputOptions={{
                     placeholder: 'Your email',
                     type: 'email',
@@ -63,6 +126,7 @@ function Form() {
             <FormInput 
                 labelText='Phone' 
                 inputType='number' 
+                errorText={formErrors.phoneError} 
                 inputOptions={{
                     placeholder: 'Phone number',
                     type: 'number',
@@ -79,6 +143,7 @@ function Form() {
             <FormInput 
                 labelText='Please rate the quality of the service you received from your host.' 
                 inputType='checkbox' 
+                errorText={formErrors.serviceRatingError} 
                 inputOptions={{
                     required: true,
                     type: 'checkbox',
@@ -95,6 +160,7 @@ function Form() {
             <FormInput 
                 labelText='Please rate the quality of the beverage.' 
                 inputType='checkbox' 
+                errorText={formErrors.beverageRatingError} 
                 inputOptions={{
                     required: true,
                     type: 'checkbox',
@@ -111,6 +177,7 @@ function Form() {
             <FormInput 
                 labelText='Was our restaurant clean?' 
                 inputType='checkbox' 
+                errorText={formErrors.cleanlinessRatingError} 
                 inputOptions={{
                     required: true,
                     type: 'checkbox',
@@ -127,6 +194,7 @@ function Form() {
             <FormInput 
                 labelText='Please rate your overall dining experience.' 
                 inputType='checkbox' 
+                errorText={formErrors.overallRatingError} 
                 inputOptions={{
                     required: true,
                     type: 'checkbox',
@@ -145,6 +213,7 @@ function Form() {
             <Button 
                 buttonText='Submit Review' 
                 type='submit' 
+                buttonType='regular' 
                 onClick={submitHandler} 
             />
         </form>

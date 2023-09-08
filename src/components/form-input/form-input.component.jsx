@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import './form-input.styles.scss';
-import { CountryListContext } from '../context/CountryListContext';
-import { CountryContext } from '../context/CountryContext';
+import { CountryListContext } from '../../context/CountryListContext';
+import { CountryContext } from '../../context/CountryContext';
 
-function FormInput({ labelText, inputType, inputOptions }) {
+function FormInput({ labelText, inputType, inputOptions, errorText }) {
     const { countries } = useContext(CountryListContext);
 
     const { selectedCountry, setSelectedCountry, countryDetails } = useContext(CountryContext);
@@ -87,6 +87,8 @@ function FormInput({ labelText, inputType, inputOptions }) {
                     </label>
                 </div>
             }
+
+            {errorText && <p className='error-text'>{errorText}</p>}
         </div>
     );
 }
