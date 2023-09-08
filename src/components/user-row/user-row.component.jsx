@@ -7,7 +7,7 @@ import { faBucket } from '@fortawesome/free-solid-svg-icons'
 
 function UserRow({ user }) {
     const { setShowCard } = useContext(CardContext);
-    const { setSelectedUser, deleteUser } = useContext(UsersContext);
+    const { setSelectedUser, deleteUserFeedback } = useContext(UsersContext);
 
     const selectUser = () => {
         setSelectedUser(user);
@@ -15,7 +15,7 @@ function UserRow({ user }) {
     }
 
     const handleDeleteUser = () => {
-        deleteUser(user);
+        deleteUserFeedback(user.id);
     }
 
     return (

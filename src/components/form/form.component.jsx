@@ -1,14 +1,16 @@
 import React, { useContext, useState } from 'react';
 import './form.styles.scss';
+import { v4 as uuidv4 } from 'uuid';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 import { CountryContext } from '../../context/CountryContext';
 import { UsersContext } from '../../context/UsersContext';
 import { useNavigate } from 'react-router-dom';
-import { validateEmail, validatePhoneNumber } from '../../utils/validation.util';
+import { validateEmail, validatePhoneNumber } from '../../lib/utils/validation.util';
+import { createFeedbackDoc } from '../../lib/utils/firebase.utils';
 
 function Form() {
-    const { users, setUsers } = useContext(UsersContext);
+    const { setButtonClicked } = useContext(UsersContext);
 
     const defaultFormFields = {
         name: '',
@@ -44,7 +46,7 @@ function Form() {
 
     const navigate = useNavigate();
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
 
         const newFormErrors = {};
@@ -83,7 +85,9 @@ function Form() {
         }
 
         if (Object.keys(newFormErrors).length === 0) {
-            setUsers([...users, {...formInputs, nation: countryDetails}]);
+            const feedback = {...formInputs, nation: countryDetails, id: uuidv4()};
+            await createFeedbackDoc(feedback);
+            setButtonClicked(true);
             setFormInputs(defaultFormFields);
             navigate('/success');
         } else {

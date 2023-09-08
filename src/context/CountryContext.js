@@ -21,7 +21,7 @@ export const CountryContextProvider = ({ children }) => {
 
         setCountryDetails({
             flagURL: country[0]?.flags.png,
-            callingCode: country[0]?.callingCodes,
+            callingCode: country[0]?.callingCodes[0],
             alpha3Code: country[0]?.alpha3Code
         });
     }, [selectedCountry]);
@@ -33,7 +33,7 @@ export const CountryContextProvider = ({ children }) => {
 
         setCountryDetails({
             flagURL: country[0]?.flags.png,
-            callingCode: country[0]?.callingCodes,
+            callingCode: country[0]?.callingCodes[0],
             alpha3Code: country[0]?.alpha3Code
         });
     }, [countries]);

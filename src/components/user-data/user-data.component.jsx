@@ -6,10 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBucket } from '@fortawesome/free-solid-svg-icons'
 
 function UserData() {
-    const { users, clearUsers } = useContext(UsersContext);
+    const { users, clearUserFeedbacks } = useContext(UsersContext);
 
     const handleClearUsers = () => {
-        clearUsers();
+        clearUserFeedbacks();
     }
 
     return (
